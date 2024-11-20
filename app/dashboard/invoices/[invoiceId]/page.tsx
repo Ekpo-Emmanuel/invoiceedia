@@ -4,10 +4,9 @@ import { db } from "@/db"
 import { Invoices } from '@/db/schema'
 import { eq } from 'drizzle-orm';
 
-  
 
-export default async function InvoicePage({ params }: { params: { invoiceId: string } }) {
-  const { invoiceId } = await params;
+export default async function InvoicePage({ params }: { params: Promise<{ invoiceId: string }> }) {
+  const invoiceId  = (await params).invoiceId;
   const invoiceIdNumber = parseInt(invoiceId);
 
   const [result] = await db.select()
