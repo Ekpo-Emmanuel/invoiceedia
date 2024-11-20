@@ -7,7 +7,6 @@ import { LoaderCircle } from 'lucide-react'
 // Create a separate component for the button contents
 function ButtonContent() {
     const { pending } = useFormStatus()
-    console.log(pending)
     return (
         <>
             <span className={pending ? 'text-transparent' : ''}>Submit</span>
