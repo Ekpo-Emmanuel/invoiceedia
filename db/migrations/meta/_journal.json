@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1732081052551,
+      "tag": "0000_tan_franklin_richards",
+      "breakpoints": true
+    }
+  ]
+}
