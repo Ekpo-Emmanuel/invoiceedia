@@ -1,8 +1,14 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button"
 import {sql} from "drizzle-orm"
-
 import {db} from "@/db"
+import {
+  ClerkProvider,
+  SignInButton,
+  SignedIn,
+  SignedOut,
+  UserButton
+} from '@clerk/nextjs'
 
 export default async function Home() {
   const result = await db.execute(sql`SELECT current_database()`);
@@ -14,9 +20,14 @@ export default async function Home() {
         <Button asChild>
           <Link href="/dashboard">Get started</Link>
         </Button>
-        <Button asChild variant={"outline"}>
-          <Link href="/login">Sign in</Link>
-        </Button>
+        <SignedOut>
+          <Button asChild variant={"outline"}>
+            <SignInButton />
+          </Button>
+          </SignedOut>
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
       </div>
     </div>
   );
