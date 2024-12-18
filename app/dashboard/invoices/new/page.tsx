@@ -41,7 +41,7 @@ export default function page() {
                     <Input id="value" name="value" type="text" />
                 </div>
                 <div className="grid w-full gap-2">
-                    <Label htmlFor="description" className="block font-semibold text-sm">Billing Name</Label>
+                    <Label htmlFor="description" className="block font-semibold text-sm">Description</Label>
                     <Textarea id="description" name="description" placeholder="Type your message here." />
                 </div>
                 <SubmitButton />
