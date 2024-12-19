@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { ClerkProvider } from '@clerk/nextjs'
-import Header from "@/components/custom/Header";
 import Footer from "@/components/custom/Footer";
 import { Toaster, toast } from 'sonner'
+import DashboardHeader from "@/components/custom/DashboardHeader";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -32,7 +32,7 @@ export default function RootLayout({
       <html lang="en">
         <Toaster richColors position="bottom-right"/>
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen grid grid-rows-[auto_1fr_auto]`}>
-          <Header />
+          <DashboardHeader />
           {children}
           <Footer />
         </body>
