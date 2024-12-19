@@ -1,131 +1,292 @@
-'use client';
+"use client";
 
 import React from "react";
-import { Invoices } from "@/db/schema";
+import { Invoices, Customers } from "@/db/schema";
 import { Badge } from "@/components/ui/badge";
 import clsx from "clsx";
-import { ChevronDown, Ellipsis } from 'lucide-react';
+import {
+  ChevronDown,
+  Ellipsis,
+  DollarSign,
+  Download,
+  FileImage,
+  MoreHorizontal,
+  Receipt,
+  Trash2,
+  ChevronRight,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { AVAILABLE_STATUSES } from "../../(data)/invoices";
-import { updateStatusAction } from "@/app/actions";
+import { updateStatusAction, deleteInoviceAction } from "@/app/actions";
 import { useOptimistic } from "react";
+import Link from "next/link";
+import { Separator } from "@/components/ui/separator";
 
 interface InvooiceProps {
-    invoice: typeof Invoices.$inferSelect
+  invoice: typeof Invoices.$inferSelect & {
+    customer: typeof Customers.$inferSelect;
+  };
 }
 
-export default function Invoice({invoice}: InvooiceProps) {
-    const [currentStatus, setCurrentStatus] = useOptimistic(
-        invoice.status, 
-        (state, newStatus) => {
-            return String(newStatus)
-        });
-    
-    async function handleUpdateStatus(formData: FormData) {
-        const originalStatus = currentStatus;
-        setCurrentStatus(formData.get('status'))
-        try {
-            await updateStatusAction(formData);
-        } catch (e) {
-            setCurrentStatus(originalStatus)
-        }
+export default function Invoice({ invoice }: InvooiceProps) {
+  const [currentStatus, setCurrentStatus] = useOptimistic(
+    invoice.status,
+    (state, newStatus) => {
+      return newStatus as
+        | "open"
+        | "paid"
+        | "void"
+        | "uncollectible"
+        | "canceled"
+        | "pending"
+        | "failed";
     }
-  return (
-    <div className="p-4 max-w-7xl mx-auto w-full">
-      <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-semibold flex items-center gap-2 mb-3">
-          Invoices {invoice.id}
-          <Badge
-            className={clsx(
-              "rounded-full h-fit capitalize",
-              invoice.status === "open" && "bg-blue-500",
-              invoice.status === "paid" && "bg-green-500",
-              invoice.status === "void" && "bg-zinc-700",
-              invoice.status === "uncollectible" && "bg-red-600",
-              invoice.status === "canceled" && "bg-yellow-500",
-              invoice.status === "pending" && "bg-orange-500",
-              invoice.status === "failed" && "bg-purple-500"
-            )}
-          >
-            {invoice.status}
-          </Badge>
-        </h2>
-        <div className="flex items-center gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="flex items-center gap-2">Change Status <ChevronDown className="w-4 h-4"/></Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              {AVAILABLE_STATUSES.map((status) => (
-                <DropdownMenuItem key={status.id}>
-                  <form action={handleUpdateStatus}>
-                    <input type="hidden" name="id" value={invoice.id} />
-                    <input type="hidden" name="status" value={status.id} />
-                    <button>{status.label}</button>
-                  </form>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon" className="flex items-center gap-2">
-                <Ellipsis className="w-4 h-4"/>
-                <span className="sr-only">More Options</span>
-            </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              {AVAILABLE_STATUSES.map((status) => (
-                <DropdownMenuItem key={status.id}>
-                  <form action={handleUpdateStatus}>
-                    <input type="hidden" name="id" value={invoice.id} />
-                    <input type="hidden" name="status" value={status.id} />
-                    <button>{status.label}</button>
-                  </form>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
-      <p className="text-4xl mb-3">${(invoice.value / 100).toFixed(2)}</p>
-      <p>{invoice.description}</p>
+  );
 
-      <div className="mt-10">
-        <h3>Billing Details</h3>
-        <ul className="grid gap-2">
-          <li className="flex gap-4">
-            <strong className="block w-28 flex-shrink-0 font-medium text-sm">
-              Invoice ID
-            </strong>
-            <span>{invoice.id}</span>
-          </li>
-          <li className="flex gap-4">
-            <strong className="block w-28 flex-shrink-0 font-medium text-sm">
-              Invoice Date
-            </strong>
-            <span>{new Date(invoice.createTs).toLocaleDateString()}</span>
-          </li>
-          <li className="flex gap-4">
-            <strong className="block w-28 flex-shrink-0 font-medium text-sm">
-              Billing Name
-            </strong>
-            <span></span>
-          </li>
-          <li className="flex gap-4">
-            <strong className="block w-28 flex-shrink-0 font-medium text-sm">
-              Billing Email
-            </strong>
-            <span></span>
-          </li>
-        </ul>
+  const statusColors = {
+    open: "bg-blue-500 text-white",
+    paid: "bg-green-500 text-white",
+    void: "bg-gray-500 text-white",
+    uncollectible: "bg-red-600 text-white",
+    canceled: "bg-yellow-400 text-black",
+    pending: "bg-yellow-400 text-black",
+    failed: "bg-red-500 text-white",
+  };
+
+  async function handleUpdateStatus(formData: FormData) {
+    const originalStatus = currentStatus;
+    setCurrentStatus(formData.get("status"));
+    try {
+      await updateStatusAction(formData);
+    } catch (e) {
+      setCurrentStatus(originalStatus);
+    }
+  }
+
+  return (
+    <>
+      <div className="px-4 space-y-2 mx-auto max-w-7xl w-full">
+        <nav className="flex" aria-label="Breadcrumb">
+          <ol className="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
+            <li className="inline-flex items-center">
+              <Link
+                href="/dashboard"
+                className="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600"
+              >
+                <svg
+                  className="w-3 h-3"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z" />
+                </svg>
+              </Link>
+            </li>
+            <li aria-current="page">
+              <div className="flex items-center">
+                <ChevronRight className="w-4 h-4 text-gray-400 mx-1" />
+                <span className="ms-1 text-sm font-medium text-gray-700 md:ms-2">
+                  <Link href={`/dashboard/invoices/${invoice.id}`}>Invoices </Link>
+                </span>
+              </div>
+            </li>
+            <li aria-current="page">
+              <div className="flex items-center">
+                <ChevronRight className="w-4 h-4 text-gray-400 mx-1" />
+                <span className="ms-1 text-sm font-medium text-gray-700 md:ms-2">
+                  <Link href={`/dashboard/invoices/${invoice.id}`}>INV{invoice.id}</Link>
+                </span>
+              </div>
+            </li>
+          </ol>
+        </nav>
+        <Card className="">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0">
+            <div className="space-y-1.5">
+              <CardTitle className="text-2xl">Invoice #{invoice.id}</CardTitle>
+              <CardDescription>
+                Description: {invoice.description}
+              </CardDescription>
+            </div>
+            <div className="flex items-center gap-2">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="flex items-center gap-2">
+                    <Badge
+                      className={`rounded-full h-fit capitalize ${statusColors[invoice.status]}`}
+                    >
+                      {invoice.status}
+                    </Badge>
+                    <ChevronDown className="w-4 h-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  {AVAILABLE_STATUSES.map((status) => (
+                    <DropdownMenuItem key={status.id}>
+                      <form action={handleUpdateStatus}>
+                        <input type="hidden" name="id" value={invoice.id} />
+                        <input type="hidden" name="status" value={status.id} />
+                        <button>{status.label}</button>
+                      </form>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <Dialog>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="rounded-full"
+                    >
+                      <MoreHorizontal className="h-4 w-4" />
+                      <span className="sr-only">More actions</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem>
+                      <Download className="mr-2 h-4 w-4" />
+                      Download PDF
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <FileImage className="mr-2 h-4 w-4" />
+                      Save as Image
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DialogTrigger asChild>
+                      <DropdownMenuItem className="text-destructive">
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Delete Invoice
+                      </DropdownMenuItem>
+                    </DialogTrigger>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <DialogContent>
+                  <DialogHeader className="gap-4">
+                    <DialogTitle>Delete Invoice?</DialogTitle>
+                    <DialogDescription>
+                      This action cannot be undone. This will permanently delete
+                      your invoice and remove your data from our servers.
+                    </DialogDescription>
+                    <DialogFooter>
+                      <form
+                        className="flex justify-center gap-2"
+                        action={deleteInoviceAction}
+                      >
+                        <input type="hidden" name="id" value={invoice.id} />
+                        <Button className="font-semibold" variant="destructive">
+                          Delete Invoice <Trash2 className="ml-2 w-4 h-4" />
+                        </Button>
+                      </form>
+                      <DialogClose asChild>
+                        <div>
+                          <Button variant="secondary" type="button">
+                            Cancel
+                          </Button>
+                        </div>
+                      </DialogClose>
+                    </DialogFooter>
+                  </DialogHeader>
+                </DialogContent>
+              </Dialog>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex items-baseline justify-between">
+              <div className="text-sm font-medium text-muted-foreground">
+                Amount Due
+              </div>
+              <div className="text-3xl font-bold">
+                ${(invoice.value / 100).toFixed(2)}
+              </div>
+            </div>
+            <Separator />
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Billing Details</h3>
+              <div className="grid gap-4 text-sm md:grid-cols-2">
+                <div className="space-y-2">
+                  <div className="font-medium text-muted-foreground">
+                    Invoice Date
+                  </div>
+                  <div>{new Date(invoice.createTs).toLocaleDateString()}</div>
+                </div>
+                <div className="space-y-2">
+                  <div className="font-medium text-muted-foreground">
+                    Invoice ID
+                  </div>
+                  <div>{invoice.id}</div>
+                </div>
+                <div className="space-y-2">
+                  <div className="font-medium text-muted-foreground">
+                    Billed To
+                  </div>
+                  <div>{invoice.customer.name}</div>
+                  <div>{invoice.customer.email}</div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+          <CardFooter className="flex flex-col gap-4 sm:flex-row sm:justify-end">
+            <Button variant="outline" className="w-full sm:w-auto">
+              <Receipt className="mr-2 h-4 w-4" />
+              Download Receipt
+            </Button>
+            <Link
+              href={`/dashboard/invoices/${invoice.id}/payment`}
+              className="w-full sm:w-auto"
+            >
+              <Button
+                className="w-full sm:w-auto"
+                disabled={invoice.status !== "open"}
+              >
+                {invoice.status === "open"
+                  ? "Pay Now"
+                  : "Payment " +
+                    invoice.status.charAt(0).toUpperCase() +
+                    invoice.status.slice(1)}
+              </Button>
+            </Link>
+          </CardFooter>
+        </Card>
       </div>
-    </div>
+    </>
   );
 }
