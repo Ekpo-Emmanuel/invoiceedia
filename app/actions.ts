@@ -66,13 +66,38 @@ export async function createAction(formData: FormData) {
 export async function updateStatusAction(formData: FormData) {
     const { userId, orgId } = await auth();
     if (!userId) {
-        throw new Error("User not authenticated");
+        return
     }
 
     const id = formData.get('id') as string;
     const status = formData.get('status') as 'open'| 'paid'| 'void'| 'uncollectible'| 'canceled'| 'pending'| 'failed';
 
     let result;
+
+    // if (orgId) {
+    //     result = await db.update(Invoices)
+    //         .set({ status })
+    //         .where(
+    //             and(
+    //                 eq(Invoices.id, parseInt(id)),
+    //                 eq(Invoices.organizationId, orgId)
+    //             ));
+    // } else if (userId) {
+    //     result = await db.update(Invoices)
+    //         .set({ status })
+    //         .where(
+    //             and(
+    //                 eq(Invoices.id, parseInt(id)),
+    //                 eq(Invoices.userId, userId),
+    //                 isNull(Invoices.organizationId)
+    //             ));
+    // } else {
+    //     result = await db.update(Invoices)
+    //         .set({ status })
+    //         .where(
+    //             eq(Invoices.id, parseInt(id))
+    //         );
+    // }
 
     if(orgId) {
         result = await db.update(Invoices)
@@ -93,11 +118,10 @@ export async function updateStatusAction(formData: FormData) {
                 ))
     }
 
-    revalidateInvoicePath(id);
-}
-
-async function revalidateInvoicePath(id: string) {
+    revalidatePath(`/dashboard/invoices/${id}/payment`, 'page');
     revalidatePath(`/dashboard/invoices/${id}`, 'page');
+
+    return { success: true };
 }
 
 export async function deleteInoviceAction(formData: FormData) {
