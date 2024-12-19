@@ -3,11 +3,8 @@
 import React from "react";
 import { Invoices, Customers } from "@/db/schema";
 import { Badge } from "@/components/ui/badge";
-import clsx from "clsx";
 import {
   ChevronDown,
-  Ellipsis,
-  DollarSign,
   Download,
   FileImage,
   MoreHorizontal,
@@ -41,13 +38,6 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { AVAILABLE_STATUSES } from "../../(data)/invoices";
 import { updateStatusAction, deleteInoviceAction } from "@/app/actions";
@@ -77,14 +67,15 @@ export default function Invoice({ invoice }: InvooiceProps) {
   );
 
   const statusColors = {
-    open: "bg-blue-500 text-white",
-    paid: "bg-green-500 text-white",
-    void: "bg-gray-500 text-white",
-    uncollectible: "bg-red-600 text-white",
-    canceled: "bg-yellow-400 text-black",
-    pending: "bg-yellow-400 text-black",
-    failed: "bg-red-500 text-white",
+    open: "bg-blue-100 text-blue-700 hover:bg-blue-100/80",
+    paid: "bg-green-100 text-green-700 hover:bg-green-100/80",
+    void: "bg-gray-100 text-gray-700 hover:bg-gray-100/80",
+    uncollectible: "bg-red-100 text-red-700 hover:bg-red-100/80",
+    canceled: "bg-yellow-100 text-yellow-700 hover:bg-yellow-100/80",
+    pending: "bg-yellow-100 text-yellow-700 hover:bg-yellow-100/80",
+    failed: "bg-red-100 text-red-700 hover:bg-red-100/80",
   };
+  
 
   async function handleUpdateStatus(formData: FormData) {
     const originalStatus = currentStatus;
@@ -98,7 +89,7 @@ export default function Invoice({ invoice }: InvooiceProps) {
 
   return (
     <>
-      <div className="px-4 space-y-2 mx-auto max-w-7xl w-full">
+      <div className="px-4 md:px-6 lg:px-8 space-y-2 mx-auto max-w-7xl w-full">
         <nav className="flex" aria-label="Breadcrumb">
           <ol className="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li className="inline-flex items-center">
@@ -116,14 +107,6 @@ export default function Invoice({ invoice }: InvooiceProps) {
                   <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z" />
                 </svg>
               </Link>
-            </li>
-            <li aria-current="page">
-              <div className="flex items-center">
-                <ChevronRight className="w-4 h-4 text-gray-400 mx-1" />
-                <span className="ms-1 text-sm font-medium text-gray-700 md:ms-2">
-                  <Link href={`/dashboard/invoices/${invoice.id}`}>Invoices </Link>
-                </span>
-              </div>
             </li>
             <li aria-current="page">
               <div className="flex items-center">
