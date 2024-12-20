@@ -13,6 +13,9 @@ import { LineChart } from 'lucide-react'
 export default function DashboardHeader() {
   return (
     <>
+    <div className="bg-blue-500 text-xs font-medium text-white text-center p-2">
+            We're building something great! Have feedback? Let us know.
+        </div>
         <header className="max-w-7xl w-full mx-auto px-4 md:px-6 lg:px-8 mt-6 mb-12">
             <div className="flex items-center justify-between">  
                 <div className="flex items-center gap-4">
