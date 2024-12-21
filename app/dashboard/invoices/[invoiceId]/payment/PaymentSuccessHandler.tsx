@@ -8,7 +8,7 @@ import { Loader2 } from "lucide-react";
 
 interface PaymentSuccessHandlerProps {
   sessionId: string;
-  invoiceId: string;
+  invoiceId: number;
   token?: string;
   currentStatus: string;
   paymentStatus: string;
@@ -29,7 +29,7 @@ export default function PaymentSuccessHandler({
       if (paymentStatus === 'paid' && currentStatus !== 'paid') {
         setIsUpdating(true);
         const formData = new FormData();
-        formData.append('id', invoiceId);
+        formData.append('id', String(invoiceId));
         formData.append('status', 'paid');
         if (token) {
           formData.append('token', token);
