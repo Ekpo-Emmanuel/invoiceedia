@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, CreditCard, LineChart, Shield } from "lucide-react";
 import Link from "next/link";
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import VideoEmbed from "./VideoEmbed";
 
 export default function LandingPage() {
   return (
@@ -49,9 +50,6 @@ export default function LandingPage() {
                     Start for Free <ArrowRight className="h-4 w-4" />
                   </Link>
                 </Button>
-                <Button size="lg" variant="outline">
-                  View Demo
-                </Button>
               </SignedOut>
             </motion.div>
           </motion.div>
@@ -60,16 +58,9 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.7 }}
-            className="mx-auto aspect-video max-w-5xl rounded-lg border bg-gradient-to-b from-background to-muted shadow-2xl"
+            className="mx-auto max-w-5xl shadow-2xl"
           >
-            {/* Replace with your actual app screenshot/demo */}
-            <div className="h-full w-full rounded-lg bg-muted/30 p-8">
-              <img
-                src="/assets/images/preview2.png"
-                alt="Descriptive text"
-                className="h-full w-full rounded object-cover border border-border/50"
-              />
-            </div>
+            <VideoEmbed />
           </motion.div>
         </section>
 
