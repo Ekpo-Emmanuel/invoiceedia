@@ -3,7 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { ClerkProvider } from '@clerk/nextjs'
 import Footer from "@/components/custom/Footer";
-import { Toaster, toast } from 'sonner'
+import { Toaster } from 'sonner'
 import DashboardHeader from "@/components/custom/DashboardHeader";
 
 const geistSans = localFont({
