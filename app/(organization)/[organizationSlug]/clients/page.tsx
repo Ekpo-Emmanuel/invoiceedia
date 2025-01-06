@@ -18,7 +18,6 @@ export default async function ClientPage({ params }: { params: Promise<{ organiz
 
   const organization = await client.organizations.getOrganization({ slug: organizationSlug });
 
-  // Fetch clients and stats
   const [clients, stats] = await Promise.all([
     getClientList(organization.id),
     getClientStats(organization.id)
