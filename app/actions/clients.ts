@@ -2,7 +2,7 @@
 
 import { db } from '@/db'
 import { Customers, Invoices } from '@/db/schema'
-import { eq, inArray } from 'drizzle-orm'
+import { eq, inArray, desc } from 'drizzle-orm'
 
 interface ClientStats {
     totalClients: number;
@@ -31,7 +31,7 @@ export async function getClientList(organizationId: string) {
     try {
         const clients = await db.select().from(Customers)
             .where(eq(Customers.organizationId, organizationId))
-            .orderBy(Customers.createTs)
+            .orderBy(desc(Customers.createTs))
 
         return clients
     } catch (error) {
