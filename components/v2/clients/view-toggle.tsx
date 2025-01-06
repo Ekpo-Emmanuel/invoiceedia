@@ -1,7 +1,6 @@
 "use client"
 
-import { LayoutGrid, LayoutList } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { LayoutGrid, List } from "lucide-react"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 
 interface ViewToggleProps {
@@ -11,12 +10,16 @@ interface ViewToggleProps {
 
 export function ViewToggle({ view, onViewChange }: ViewToggleProps) {
   return (
-    <ToggleGroup type="single" value={view} onValueChange={(value) => value && onViewChange(value as "table" | "list")}>
-      <ToggleGroupItem value="table" aria-label="Toggle table view">
-        <LayoutList className="h-4 w-4" />
+    <ToggleGroup 
+        type="single" 
+        value={view} onValueChange={(value) => value && onViewChange(value as "table" | "list")}
+        className="bg-white dark:bg-muted/20 border p-1 rounded"
+    >
+      <ToggleGroupItem value="table" aria-label="Toggle table view" className="p-0">
+        <List className="h-3 w-3" />
       </ToggleGroupItem>
-      <ToggleGroupItem value="list" aria-label="Toggle list view">
-        <LayoutGrid className="h-4 w-4" />
+      <ToggleGroupItem value="list" aria-label="Toggle list view" className="p-0">
+        <LayoutGrid className="h-3 w-3" />
       </ToggleGroupItem>
     </ToggleGroup>
   )
