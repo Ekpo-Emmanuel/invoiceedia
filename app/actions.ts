@@ -31,36 +31,36 @@ export async function createAction(formData: FormData) {
     const email = formData.get("email") as string;
 
 
-    const [ customer ] = await db.insert(Customers).values({
-        name,
-        email,
-        userId,
-        organizationId: orgId || null
-    })
-    .returning({
-        id: Customers.id
-    })
+    // const [ customer ] = await db.insert(Customers).values({
+    //     name,
+    //     email,
+    //     userId,
+    //     organizationId: orgId || null
+    // })
+    // .returning({
+    //     id: Customers.id
+    // })
     
-    const results = await db.insert(Invoices).values({
-        value,
-        description,
-        userId,
-        customerId: customer.id,
-        organizationId: orgId || null,
-        status: 'open',
-    })
-    .returning({
-        id: Invoices.id
-    })
+    // const results = await db.insert(Invoices).values({
+    //     value,
+    //     description,
+    //     userId,
+    //     customerId: customer.id,
+    //     organizationId: orgId || null,
+    //     status: 'open',
+    // })
+    // .returning({
+    //     id: Invoices.id
+    // })
 
-    const { data, error } = await resend.emails.send({
-        from: 'Invoicedia <onboarding@resend.dev>',
-        to: [email],
-        subject: 'You Have a New Invoice',
-        react: InvoiceCreatedEmail({ invoiceId: results[0].id }),
-      });
+    // const { data, error } = await resend.emails.send({
+    //     from: 'Invoicedia <onboarding@resend.dev>',
+    //     to: [email],
+    //     subject: 'You Have a New Invoice',
+    //     react: InvoiceCreatedEmail({ invoiceId: results[0].id }),
+    //   });
   
-    redirect(`/dashboard/invoices/${results[0].id}`);
+    // redirect(`/dashboard/invoices/${results[0].id}`);
 }
 
 export async function updateStatusAction(formData: FormData) {
@@ -99,27 +99,27 @@ export async function updateStatusAction(formData: FormData) {
     //         );
     // }
 
-    if(orgId) {
-        result = await db.update(Invoices)
-            .set({ status })
-            .where(
-                and(
-                    eq(Invoices.id, parseInt(id)),
-                    eq(Invoices.organizationId, orgId)
-                ))
-    } else {
-        result = await db.update(Invoices)
-            .set({ status })
-            .where(
-                and(
-                    eq(Invoices.id, parseInt(id)),
-                    eq(Invoices.userId, userId),
-                    isNull(Invoices.organizationId)
-                ))
-    }
+    // if(orgId) {
+    //     result = await db.update(Invoices)
+    //         .set({ status })
+    //         .where(
+    //             and(
+    //                 eq(Invoices.id, parseInt(id)),
+    //                 eq(Invoices.organizationId, orgId)
+    //             ))
+    // } else {
+    //     result = await db.update(Invoices)
+    //         .set({ status })
+    //         .where(
+    //             and(
+    //                 eq(Invoices.id, parseInt(id)),
+    //                 eq(Invoices.userId, userId),
+    //                 isNull(Invoices.organizationId)
+    //             ))
+    // }
 
-    revalidatePath(`/dashboard/invoices/${id}/payment`, 'page');
-    revalidatePath(`/dashboard/invoices/${id}`, 'page');
+    // revalidatePath(`/dashboard/invoices/${id}/payment`, 'page');
+    // revalidatePath(`/dashboard/invoices/${id}`, 'page');
 
     return { success: true };
 }
@@ -132,22 +132,22 @@ export async function deleteInoviceAction(formData: FormData) {
 
     const id = formData.get('id') as string;
 
-    if(orgId) {
-        await db.delete(Invoices)
-            .where(
-                and(
-                    eq(Invoices.id, parseInt(id)),
-                    eq(Invoices.organizationId, orgId)
-                ))
-    } else {
-        await db.delete(Invoices)
-            .where(
-                and(
-                    eq(Invoices.id, parseInt(id)),
-                    eq(Invoices.userId, userId),
-                    isNull(Invoices.organizationId)
-                ))
-    }
+    // if(orgId) {
+    //     await db.delete(Invoices)
+    //         .where(
+    //             and(
+    //                 eq(Invoices.id, parseInt(id)),
+    //                 eq(Invoices.organizationId, orgId)
+    //             ))
+    // } else {
+    //     await db.delete(Invoices)
+    //         .where(
+    //             and(
+    //                 eq(Invoices.id, parseInt(id)),
+    //                 eq(Invoices.userId, userId),
+    //                 isNull(Invoices.organizationId)
+    //             ))
+    // }
 
 
     redirect(`/dashboard`);
@@ -158,34 +158,34 @@ export async function createPayment(formData: FormData) {
     const origin = (await headersList).get('origin');
     const id = parseInt(formData.get('id') as string);
 
-    const [result] = await db.select({
-        status: Invoices.status,
-        value: Invoices.value,
-    })
-        .from(Invoices)
-        .where(eq(Invoices.id, id))
-        .limit(1);
+    // const [result] = await db.select({
+    //     status: Invoices.status,
+    //     value: Invoices.value,
+    // })
+    //     .from(Invoices)
+    //     .where(eq(Invoices.id, id))
+    //     .limit(1);
 
-    //create checkout session
-    const session = await stripe.checkout.sessions.create({
-        line_items: [
-            {
-                price_data: {
-                    currency: 'usd',
-                    product: 'prod_RQMWSS3RxGWgKt',
-                    unit_amount: result.value,
-                },
-                quantity: 1,
-            },
-        ],
-        mode: 'payment',
-        success_url: `${origin}/dashboard/invoices/${id}/payment?status=success&session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${origin}/dashboard/invoices/${id}/payment?status=canceled&session_id={CHECKOUT_SESSION_ID}`,
-    });
+    // //create checkout session
+    // const session = await stripe.checkout.sessions.create({
+    //     line_items: [
+    //         {
+    //             price_data: {
+    //                 currency: 'usd',
+    //                 product: 'prod_RQMWSS3RxGWgKt',
+    //                 unit_amount: result.value,
+    //             },
+    //             quantity: 1,
+    //         },
+    //     ],
+    //     mode: 'payment',
+    //     success_url: `${origin}/dashboard/invoices/${id}/payment?status=success&session_id={CHECKOUT_SESSION_ID}`,
+    //     cancel_url: `${origin}/dashboard/invoices/${id}/payment?status=canceled&session_id={CHECKOUT_SESSION_ID}`,
+    // });
 
-    if(!session.url) {
-        throw new Error("Error creating checkout session");
-    }
+    // if(!session.url) {
+    //     throw new Error("Error creating checkout session");
+    // }
 
-    redirect(session.url);
+    // redirect(session.url);
 }

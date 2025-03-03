@@ -8,7 +8,7 @@ import {
   UserButton,
 } from "@clerk/nextjs";
 import Link from "next/link";
-import { LineChart } from 'lucide-react'
+import LogoSvg from "@/components/logo-svg";
 
 export default function DashboardHeader() {
   return (
@@ -20,7 +20,7 @@ export default function DashboardHeader() {
             <div className="flex items-center justify-between">  
                 <div className="flex items-center gap-4">
                     <p className="font-bold flex items-center gap-2">
-                        <LineChart className="h-6 w-6" />
+                        <LogoSvg fill="currentColor"/>
                         <Link href="/">Invoicedia</Link>
                     </p>
                     <SignedIn>

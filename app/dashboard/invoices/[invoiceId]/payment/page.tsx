@@ -26,55 +26,57 @@ export default async function Payment({ params, searchParams }: InvoicePageProps
   const status = (await searchParams).status;
   const token = (await searchParams).token;
 
-  const [result] = await db.select({
-    id: Invoices.id,
-    status: Invoices.status,
-    createTs: Invoices.createTs,
-    description: Invoices.description,
-    value: Invoices.value,
-    name: Customers.name,
-    email: Customers.email
-  })
-    .from(Invoices)
-    .innerJoin(Customers, eq(Invoices.customerId, Customers.id))
-    .where(eq(Invoices.id, invoiceIdNumber));
+  // const [result] = await db.select({
+  //   id: Invoices.id,
+  //   status: Invoices.status,
+  //   createTs: Invoices.createTs,
+  //   description: Invoices.description,
+  //   value: Invoices.value,
+  //   name: Customers.name,
+  //   email: Customers.email
+  // })
+  //   .from(Invoices)
+  //   .innerJoin(Customers, eq(Invoices.customerId, Customers.id))
+  //   .where(eq(Invoices.id, invoiceIdNumber));
 
-  if (!result) {
-    notFound();
-  }
+  // if (!result) {
+  //   notFound();
+  // }
 
-  const invoice = {
-    ...result,
-    customer: {
-      name: result.name,
-      email: result.email 
-    }
-  }
+  // const invoice = {
+  //   ...result,
+  //   customer: {
+  //     name: result.name,
+  //     email: result.email 
+  //   }
+  // }
 
 
-  const isSuccess = Boolean(sessionId && status === 'success');
-  const isCanceled = status === 'canceled';
-  let isError = Boolean(!sessionId && isSuccess);
-  let paymentStatus = '';
+  // const isSuccess = Boolean(sessionId && status === 'success');
+  // const isCanceled = status === 'canceled';
+  // let isError = Boolean(!sessionId && isSuccess);
+  // let paymentStatus = '';
 
-  if (isSuccess) {
-    const session = await stripe.checkout.sessions.retrieve(sessionId);
-    paymentStatus = session.payment_status;
-    if (paymentStatus !== 'paid') {
-      isError = true;
-    }
-  }
+  // if (isSuccess) {
+  //   const session = await stripe.checkout.sessions.retrieve(sessionId);
+  //   paymentStatus = session.payment_status;
+  //   if (paymentStatus !== 'paid') {
+  //     isError = true;
+  //   }
+  // }
 
 
   return (
-    <PaymentDisplay
-      invoice={invoice}
-      isSuccess={isSuccess}
-      isError={isError}
-      isCanceled={isCanceled}
-      sessionId={sessionId}
-      token={token}
-      paymentStatus={paymentStatus}
-    />
+    <>
+      {/* <PaymentDisplay
+        invoice={invoice}
+        isSuccess={isSuccess}
+        isError={isError}
+        isCanceled={isCanceled}
+        sessionId={sessionId}
+        token={token}
+        paymentStatus={paymentStatus}
+      /> */}
+    </>
   );
 }

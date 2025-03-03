@@ -17,41 +17,43 @@ export default async function InvoicePage({
   const { userId, orgId } = await auth();
   if (!userId) return;
 
-  const invoiceId = (await params).invoiceId;
-  const invoiceIdNumber = parseInt(invoiceId);
+  // const invoiceId = (await params).invoiceId;
+  // const invoiceIdNumber = parseInt(invoiceId);
 
-  let result;
+  // let result;
 
-  if(orgId) {
-    [result] = await db
-      .select()
-      .from(Invoices)
-      .innerJoin(Customers, eq(Invoices.customerId, Customers.id))
-      .where(and(
-        eq(Invoices.id, invoiceIdNumber), 
-        eq(Invoices.organizationId, orgId)
-      ));
-  } else {
-    [result] = await db
-    .select()
-    .from(Invoices)
-    .innerJoin(Customers, eq(Invoices.customerId, Customers.id))
-    .where(and(
-      eq(Invoices.id, invoiceIdNumber), 
-      eq(Invoices.userId, userId),
-      isNull(Invoices.organizationId)
-    ));
-  }
+  // if(orgId) {
+  //   [result] = await db
+  //     .select()
+  //     .from(Invoices)
+  //     .innerJoin(Customers, eq(Invoices.customerId, Customers.id))
+  //     .where(and(
+  //       eq(Invoices.id, invoiceIdNumber), 
+  //       eq(Invoices.organizationId, orgId)
+  //     ));
+  // } else {
+  //   [result] = await db
+  //   .select()
+  //   .from(Invoices)
+  //   .innerJoin(Customers, eq(Invoices.customerId, Customers.id))
+  //   .where(and(
+  //     eq(Invoices.id, invoiceIdNumber), 
+  //     eq(Invoices.userId, userId),
+  //     isNull(Invoices.organizationId)
+  //   ));
+  // }
 
-  if (!result) {
-    notFound();
-  }
+  // if (!result) {
+  //   notFound();
+  // }
 
-  const invoice = {
-    ...result.invoices,
-    customer: result.customers
-  }
+  // const invoice = {
+  //   ...result.invoices,
+  //   customer: result.customers
+  // }
   return (
-    <Invoice invoice={invoice}/>
+    <>
+    {/* <Invoice invoice={invoice}/> */}
+    </>
   );
 }

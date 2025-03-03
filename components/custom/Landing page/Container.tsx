@@ -43,6 +43,7 @@ export default function LandingPage() {
                   </Link>
                 </Button>
               </SignedIn>
+              <UserButton />
 
               <SignedOut>
                 <Button size="lg" asChild>

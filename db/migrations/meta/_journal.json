@@ -50,6 +50,13 @@
       "when": 1734549728528,
       "tag": "0006_fast_vulture",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1736180342938,
+      "tag": "0007_naive_annihilus",
+      "breakpoints": true
     }
   ]
 }

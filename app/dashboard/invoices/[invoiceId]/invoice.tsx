@@ -104,20 +104,20 @@ export default function Invoice({ invoice }: InvooiceProps) {
   }
 
   async function htmlToImageConvert() {
-    try {
-      const node = contentRef.current;
-      const currentDate = new Date().toISOString().split('T')[0];
+    // try {
+    //   const node = contentRef.current;
+    //   const currentDate = new Date().toISOString().split('T')[0];
     
-      if (node) {
-        const dataUrl = await toPng(node, { cacheBust: false });
-        const link = document.createElement("a");
-        link.download = `Invoice_INV${invoice.id}_${invoice.customer.name}_${currentDate}.png`;
-        link.href = dataUrl;
-        link.click();
-      }
-    } catch(err) {
-      console.error("Error generating image:", err);
-    }
+    //   if (node) {
+    //     const dataUrl = await toPng(node, { cacheBust: false });
+    //     const link = document.createElement("a");
+    //     link.download = `Invoice_INV${invoice.id}_${invoice.customer.name}_${currentDate}.png`;
+    //     link.href = dataUrl;
+    //     link.click();
+    //   }
+    // } catch(err) {
+    //   console.error("Error generating image:", err);
+    // }
   }
 
 
@@ -126,61 +126,61 @@ export default function Invoice({ invoice }: InvooiceProps) {
     const currentDate = new Date().toISOString().split('T')[0];
 
   
-    if (content) {
-      try {
-        const canvas = await html2canvas(content, {
-          scale: 2,
-          useCORS: true,
-          logging: true,
-          scrollY: -window.scrollY,
-        });
+    // if (content) {
+    //   try {
+    //     const canvas = await html2canvas(content, {
+    //       scale: 2,
+    //       useCORS: true,
+    //       logging: true,
+    //       scrollY: -window.scrollY,
+    //     });
   
-        const imgData = canvas.toDataURL("image/png");
-        const pdf = new jsPDF("p", "mm", "a4");
-        const imgWidth = 210;
-        const pageHeight = 297;
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    //     const imgData = canvas.toDataURL("image/png");
+    //     const pdf = new jsPDF("p", "mm", "a4");
+    //     const imgWidth = 210;
+    //     const pageHeight = 297;
+    //     const imgHeight = (canvas.height * imgWidth) / canvas.width;
   
-        let position = 0;
-        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+    //     let position = 0;
+    //     pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
   
-        if (imgHeight > pageHeight) {
-          let remainingHeight = imgHeight;
-          position = 0;
+    //     if (imgHeight > pageHeight) {
+    //       let remainingHeight = imgHeight;
+    //       position = 0;
   
-          while (remainingHeight > 0) {
-            position += pageHeight;
-            pdf.addPage();
-            pdf.addImage(
-              imgData,
-              "PNG",
-              0,
-              -position,
-              imgWidth,
-              imgHeight
-            );
-            remainingHeight -= pageHeight;
-          }
-        }
+    //       while (remainingHeight > 0) {
+    //         position += pageHeight;
+    //         pdf.addPage();
+    //         pdf.addImage(
+    //           imgData,
+    //           "PNG",
+    //           0,
+    //           -position,
+    //           imgWidth,
+    //           imgHeight
+    //         );
+    //         remainingHeight -= pageHeight;
+    //       }
+    //     }
   
-        pdf.save(`Invoice_INV${invoice.id}_${invoice.customer.name}_${currentDate}.pdf`);
-      } catch (error) {
-        console.error("Error generating PDF:", error);
-      }
-    }
+    //     pdf.save(`Invoice_INV${invoice.id}_${invoice.customer.name}_${currentDate}.pdf`);
+    //   } catch (error) {
+    //     console.error("Error generating PDF:", error);
+    //   }
+    // }
   };
 
   const shareInvoice = () => {
     const shareUrl = `${window.location.origin}/dashboard/invoices/${invoice.id}/payment`
-    if (navigator.share) {
-      navigator.share({
-        title: `Invoice #${invoice.id}`,
-        text: `Check out this invoice for ${invoice.customer.name}`,
-        url: shareUrl,
-      }).catch(console.error)
-    } else {
-      copyToClipboard(shareUrl)
-    }
+    // if (navigator.share) {
+    //   navigator.share({
+    //     title: `Invoice #${invoice.id}`,
+    //     text: `Check out this invoice for ${invoice.customer.name}`,
+    //     url: shareUrl,
+    //   }).catch(console.error)
+    // } else {
+    //   copyToClipboard(shareUrl)
+    // }
   }
 
   const copyToClipboard = (text: string) => {
@@ -397,7 +397,7 @@ export default function Invoice({ invoice }: InvooiceProps) {
                 <div className="font-medium text-muted-foreground">
                   Billed To
                 </div>
-                <div className="font-semibold">{invoice.customer.name}</div>
+                {/* <div className="font-semibold">{invoice.customer.name}</div> */}
                 <div>{invoice.customer.email}</div>
               </div>
             </div>

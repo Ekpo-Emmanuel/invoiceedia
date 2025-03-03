@@ -11,7 +11,7 @@ export default function Pagination({
   onPageChange: (page: number) => void;
 }) {
   return (
-    <div className="flex items-center justify-center space-x-2 py-4">
+    <div className="flex items-center justify-end space-x-2 bg-background">
       <Button
         variant="outline"
         size="sm"
