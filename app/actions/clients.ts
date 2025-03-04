@@ -29,9 +29,13 @@ export async function getClientStats(organizationId: string): Promise<ClientStat
 
 export async function getClientList(organizationId: string) {
     try {
-        const clients = await db.select().from(Customers)
-            .where(eq(Customers.organizationId, organizationId))
-            .orderBy(desc(Customers.createTs))
+        const clients = await db.query.Customers.findMany({
+            where: eq(Customers.organizationId, organizationId),
+            orderBy: desc(Customers.createTs),
+            with: {
+                invoices: true
+            }
+        })
 
         return clients
     } catch (error) {
@@ -90,7 +94,17 @@ export async function getClientById(clientId: string) {
             return null;
         }
 
-        return client;
+        // Transform invoice number fields from strings to numbers
+        return {
+            ...client,
+            invoices: client.invoices.map(invoice => ({
+                ...invoice,
+                taxRate: invoice.taxRate ? Number(invoice.taxRate) : null,
+                taxAmount: invoice.taxAmount ? Number(invoice.taxAmount) : null,
+                subtotal: Number(invoice.subtotal),
+                total: Number(invoice.total)
+            }))
+        };
     } catch (error) {
         console.error('Error fetching client:', error);
         return null;
@@ -121,5 +135,21 @@ export async function createClient(data: typeof Customers.$inferInsert) {
     } catch (error) {
         console.error('Error creating client:', error)
         throw new Error('Failed to create client')
+    }
+}
+
+export async function getClients(organizationId: string) {
+    try {
+        const clients = await db.query.Customers.findMany({
+            where: eq(Customers.organizationId, organizationId),
+            orderBy: [desc(Customers.createTs)],
+            with: {
+                invoices: true
+            }
+        })
+        return clients
+    } catch (error) {
+        console.error("Error fetching clients:", error)
+        throw new Error("Failed to fetch clients")
     }
 } 

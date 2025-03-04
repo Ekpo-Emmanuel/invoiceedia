@@ -1,23 +1,19 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import LogoSvg from "@/components/logo-svg";
+import { LoaderCircle } from 'lucide-react';
 
 export default function AnimatedLoader() {
   return (
-    <div className="h-[100svh] bg-background">
-      <motion.div
-        animate={{
-          scale: [1, 1.2, 1],
-        }}
-        transition={{
-          duration: 1.5,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-        className="fixed inset-0 flex items-center justify-center"
-      >
+    <div className="h-[100svh] bg-background relative">
+      <div className="fixed inset-0 flex items-center justify-center">
         <LogoSvg fill="currentColor" className="h-16 w-16" />
-      </motion.div>
+      </div>
+      <div className="absolute bottom-4 left-4">
+        <div className="flex items-center gap-2">
+          <LoaderCircle className="h-4 w-4 animate-spin" />
+          <span>Loading...</span>
+        </div>
+      </div>
     </div>
   );
 }
