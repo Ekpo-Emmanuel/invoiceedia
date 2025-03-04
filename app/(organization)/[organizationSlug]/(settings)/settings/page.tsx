@@ -1,15 +1,15 @@
-import { ContentLayout } from '@/components/admin-panel/content-layout'
-import { Settings } from 'lucide-react'
-import { withOrganization } from '@/utils/withOrganization'
-import SettingsContent from '@/components/v2/settings/settings-content'
+import { ContentLayout } from '@/components/admin-panel/content-layout';
+import { Settings } from 'lucide-react';
+import { withOrganization } from '@/utils/withOrganization';
+import SettingsContent from '@/components/v2/settings/settings-content';
 
-interface PageProps {
-  params: Promise<{ organizationSlug: string }>;
+type PageProps = {
+  params: { organizationSlug: string; [key: string]: any };
   organization: any;
-}
+};
 
 async function SettingsPage({ params, organization }: PageProps) {
-  const { organizationSlug } = await params;
+  const { organizationSlug } = params;
   
   // Serialize the organization object to avoid passing non-serializable data to client components
   const serializedOrg = {
@@ -47,7 +47,7 @@ async function SettingsPage({ params, organization }: PageProps) {
         organizationSlug={organizationSlug}
       />
     </ContentLayout>
-  )
+  );
 }
 
-export default withOrganization(SettingsPage)
+export default withOrganization(SettingsPage);
