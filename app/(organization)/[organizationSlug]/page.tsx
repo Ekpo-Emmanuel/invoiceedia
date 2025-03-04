@@ -1,21 +1,13 @@
 import { ContentLayout } from '@/components/admin-panel/content-layout'
 import DashboardHomePage from '@/components/v2/home/home-content-page';
-import OrganizationNotFound from "@/components/v2/organization/organization-not-found";
-import { clerkClient } from "@clerk/nextjs/server";
-import { checkOrganizationExists } from '@/utils/serverUtils';
+import { withOrganization } from '@/utils/withOrganization';
 
-export default async function Page({ params }: { params: Promise<{ organizationSlug: string }> }) {
-  const { organizationSlug } = await params;
-  const client = await clerkClient();
+interface PageProps {
+  params: Promise<{ organizationSlug: string }>;
+  organization: any;
+}
 
-  const organizationExists = await checkOrganizationExists(organizationSlug);
-
-  if (!organizationExists) {
-    return <OrganizationNotFound />;
-  }
-
-  const organization = await client.organizations.getOrganization({ slug: organizationSlug });
-
+async function Page({ organization }: PageProps) {
   return (
     <ContentLayout title="Home">
       <DashboardHomePage />
@@ -23,6 +15,7 @@ export default async function Page({ params }: { params: Promise<{ organizationS
   )
 }
 
+export default withOrganization(Page);
 
 
 // export default async function page() {
