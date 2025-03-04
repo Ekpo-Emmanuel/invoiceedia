@@ -1,61 +1,19 @@
 {
-  "version": "7",
-  "dialect": "postgresql",
+  "version": "5",
+  "dialect": "pg",
   "entries": [
     {
       "idx": 0,
       "version": "7",
-      "when": 1732081052551,
-      "tag": "0000_tan_franklin_richards",
+      "when": 1736795236264,
+      "tag": "0000_jazzy_multiple_man",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
-      "when": 1734477843425,
-      "tag": "0001_polite_wraith",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1734542996933,
-      "tag": "0002_conscious_tinkerer",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1734543484396,
-      "tag": "0003_mixed_hairball",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1734544149317,
-      "tag": "0004_marvelous_lifeguard",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1734544819963,
-      "tag": "0005_married_black_widow",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1734549728528,
-      "tag": "0006_fast_vulture",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "7",
-      "when": 1736180342938,
-      "tag": "0007_naive_annihilus",
+      "when": 1740991535376,
+      "tag": "0001_sad_black_bird",
       "breakpoints": true
     }
   ]
