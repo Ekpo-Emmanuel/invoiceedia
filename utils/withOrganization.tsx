@@ -2,15 +2,17 @@ import { clerkClient } from "@clerk/nextjs/server";
 import { checkOrganizationExists } from './serverUtils';
 import OrganizationNotFound from "@/components/v2/organization/organization-not-found";
 
-type PageProps = {
-  params: Promise<{ organizationSlug: string; [key: string]: any }>;
+type PageParams = {
+  organizationSlug: string;
+  [key: string]: any;
 };
 
-export function withOrganization<T extends PageProps>(
+export function withOrganization<T extends { params: PageParams | Promise<PageParams> }>(
   WrappedComponent: React.ComponentType<T & { organization: any }>
 ) {
   return async function WithOrganizationWrapper(props: T) {
-    const { organizationSlug } = await props.params;
+    const params = await (props.params instanceof Promise ? props.params : Promise.resolve(props.params));
+    const { organizationSlug } = params;
     const client = await clerkClient();
 
     const organizationExists = await checkOrganizationExists(organizationSlug);
@@ -23,4 +25,4 @@ export function withOrganization<T extends PageProps>(
 
     return <WrappedComponent {...props} organization={organization} />;
   };
-} 
+}
