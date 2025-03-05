@@ -1,27 +1,24 @@
-import { clerkClient } from "@clerk/nextjs/server";
-import { checkOrganizationExists } from '@/utils/serverUtils';
-import OrganizationNotFound from "@/components/v2/organization/organization-not-found";
 import { ContentLayout } from '@/components/admin-panel/content-layout'
-
 import DashboardInvoicePage from '@/components/v2/invoices/invoice-content-page';
 import { Newspaper } from "lucide-react";
+import { withOrganization } from '@/utils/withOrganization';
 
+interface PageProps {
+  params: { organizationSlug: string };
+  organization: any;
+}
 
-export default async function InvoicePage({ params }: { params: Promise<{ organizationSlug: string }> }) {
+async function InvoicePage({ params, organization }: PageProps) {
   const { organizationSlug } = await params;
-  const client = await clerkClient();
-
-  const organizationExists = await checkOrganizationExists(organizationSlug);
-
-  if (!organizationExists) {
-    return <OrganizationNotFound />;
-  }
-
-  const organization = await client.organizations.getOrganization({ slug: organizationSlug });
-
+  
   return (
     <ContentLayout title="Invoices" icon={Newspaper}> 
-      <DashboardInvoicePage />
+      <DashboardInvoicePage 
+        organizationId={organization.id}
+        organizationSlug={organizationSlug} 
+      />
     </ContentLayout>
   )
 }
+
+export default withOrganization(InvoicePage);
