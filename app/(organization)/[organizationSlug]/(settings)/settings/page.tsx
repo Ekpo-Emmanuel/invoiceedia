@@ -11,7 +11,6 @@ type PageProps = {
 async function SettingsPage({ params, organization }: PageProps) {
   const { organizationSlug } = params;
   
-  // Serialize the organization object to avoid passing non-serializable data to client components
   const serializedOrg = {
     id: organization.id,
     name: organization.name,
