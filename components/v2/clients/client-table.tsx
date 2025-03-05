@@ -28,6 +28,7 @@ import { Client } from "@/types/client"
 import { deleteClients } from "@/app/actions/clients"
 import { DeleteClientsDialog } from "./delete-clients-dialog"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import clsx from "clsx"
 
 interface ClientTableProps {
     clients: Client[]
@@ -40,6 +41,7 @@ export default function ClientTable({ clients, organizationSlug, onClientsDelete
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
 
+    // console.log(clients)
     const handleSelectAll = (checked: boolean) => {
         if (checked) {
             setSelectedClients(clients.map(client => client.id))
@@ -108,6 +110,7 @@ export default function ClientTable({ clients, organizationSlug, onClientsDelete
 
             <div className="rounded-md border">
                 <div className="relative w-full">
+                    {/* Table Header */}
                     <Table>
                         <TableHeader>
                             <TableRow>
@@ -128,7 +131,13 @@ export default function ClientTable({ clients, organizationSlug, onClientsDelete
                             </TableRow>
                         </TableHeader>
                     </Table>
-                    <ScrollArea className="h-[calc(100vh-200px)] w-full">
+
+                    {/* Table Body */}
+                    <ScrollArea className={clsx(
+                        clients.length > 0 ? "h-fit" : "h-[calc(100vh-200px)]",
+                        clients.length === 0 && "h-fit",
+                        "w-full"
+                    )}>
                         <Table>
                             <TableBody>
                                 {clients.map((client) => (
@@ -141,7 +150,7 @@ export default function ClientTable({ clients, organizationSlug, onClientsDelete
                                                 }
                                             />
                                         </TableCell>
-                                        <TableCell className="md:w-[200px] font-medium">
+                                        <TableCell className="md:w-[200px] font-medium text-primary">
                                             <div className="flex items-center gap-3">
                                                 <Link
                                                     href={`/${organizationSlug}/clients/${client.id}`}
@@ -166,7 +175,7 @@ export default function ClientTable({ clients, organizationSlug, onClientsDelete
                                             </Link>
                                         </TableCell>
                                         <TableCell className="hidden sm:table-cell w-[100px]">
-                                            {formatCurrency(client.invoices?.reduce((sum, invoice) => sum + invoice.value, 0) || 0)}
+                                            {formatCurrency(client.invoices?.reduce((sum, invoice) => (sum + invoice.total) / 100, 0) || 0)}
                                         </TableCell>
                                         <TableCell className="hidden sm:table-cell w-[100px]">
                                             {formatDate(client.createTs)}
@@ -212,16 +221,22 @@ export default function ClientTable({ clients, organizationSlug, onClientsDelete
                                         </TableCell>
                                     </TableRow>
                                 ))}
-                                {clients.length === 0 && (
-                                    <TableRow>
-                                        <TableCell colSpan={9} className="text-center text-muted-foreground py-24">
-                                            <p className="font-bold tracking-tight text-sm">No clients found</p>
-                                        </TableCell>
-                                    </TableRow>
-                                )}
                             </TableBody>
                         </Table>
                     </ScrollArea>
+
+                    {/* No clients found */}
+                    <Table>
+                        <TableBody>
+                            {clients.length === 0 && (
+                                <TableRow>
+                                    <TableCell colSpan={9} className="text-center text-muted-foreground py-24">
+                                        <p className="font-bold tracking-tight text-sm">No clients found</p>
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
                 </div>
             </div>
         </div>
