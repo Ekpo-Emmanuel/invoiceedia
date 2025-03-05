@@ -1,42 +1,47 @@
-import { clerkClient } from "@clerk/nextjs/server";
-import { checkOrganizationExists } from '@/utils/serverUtils';
-import OrganizationNotFound from "@/components/v2/organization/organization-not-found";
 import { ContentLayout } from '@/components/admin-panel/content-layout'
 import { Users } from "lucide-react";
 import { getClientById } from "@/app/actions/clients";
-import { ClientDetails } from "@/components/v2/clients/client-details";
-import { notFound } from "next/navigation";
+import { ClientProfile } from "@/components/v2/clients/client-profile";
+import ClientUserNotFound from "@/components/v2/clients/client-user-not-found";
+import { withOrganization } from '@/utils/withOrganization';
+// import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 
-interface ClientPageProps {
+interface PageProps {
   params: {
     organizationSlug: string;
     clientId: string;
   };
+  organization: any;
 }
 
-export default async function ClientPage({ params }: { params: Promise<{ organizationSlug: string, clientId: string }> }) {
+async function ClientPage({ params, organization }: PageProps) {
   const { organizationSlug, clientId } = await params;
-  const client = await clerkClient();
 
-  const organizationExists = await checkOrganizationExists(organizationSlug);
-  if (!organizationExists) {
-    return <OrganizationNotFound />;
-  }
-
-  const organization = await client.organizations.getOrganization({ slug: organizationSlug });
   const clientData = await getClientById(clientId);
-
-
   if (!clientData) {
-    notFound();
+    return <ClientUserNotFound />;
   }
+
+  const breadcrumbs = [
+    { label: "Home", href: `/${organizationSlug}` },
+    { label: "Clients", href: `/${organizationSlug}/clients` },
+    { label: `${clientData?.firstName} ${clientData?.lastName}`, href: "#" },
+  ];
 
   return (
-    <ContentLayout title={`${clientData.firstName} ${clientData.lastName}`} icon={Users}> 
-      <ClientDetails 
-        client={clientData}
-        organizationSlug={organizationSlug}
-      />
-    </ContentLayout>
+    <>
+      <ContentLayout 
+        title={`${clientData?.firstName} ${clientData?.lastName}`} 
+        icon={Users}
+      //   breadcrumbs={breadcrumbs}
+      > 
+        <ClientProfile 
+          client={clientData}
+          organizationSlug={organizationSlug}
+        />
+      </ContentLayout>
+    </>
   );
-} 
+}
+
+export default withOrganization(ClientPage); 
