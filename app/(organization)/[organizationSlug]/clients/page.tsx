@@ -1,22 +1,17 @@
-import { clerkClient } from "@clerk/nextjs/server";
-import { checkOrganizationExists } from '@/utils/serverUtils';
-import OrganizationNotFound from "@/components/v2/organization/organization-not-found";
+import { Client as ClientType } from "@/types/client";
 import { ContentLayout } from '@/components/admin-panel/content-layout'
 import { Users } from "lucide-react";
 import ClientContentPage from "@/components/v2/clients/client-content-page";
 import { getClientList, getClientStats } from "@/app/actions/clients";
+import { withOrganization } from '@/utils/withOrganization';
 
-export default async function ClientPage({ params }: { params: Promise<{ organizationSlug: string }> }) {
+interface PageProps {
+  params: { organizationSlug: string };
+  organization: any;
+}
+
+async function ClientPage({ params, organization }: PageProps) {
   const { organizationSlug } = await params;
-  const client = await clerkClient();
-
-  const organizationExists = await checkOrganizationExists(organizationSlug);
-
-  if (!organizationExists) {
-    return <OrganizationNotFound />;
-  }
-
-  const organization = await client.organizations.getOrganization({ slug: organizationSlug });
 
   const [clients, stats] = await Promise.all([
     getClientList(organization.id),
@@ -29,9 +24,11 @@ export default async function ClientPage({ params }: { params: Promise<{ organiz
         title={`${organizationSlug}/clients`} 
         organizationId={organization.id}
         organizationSlug={organizationSlug}
-        initialClients={clients}
+        initialClients={clients as ClientType[]}
         initialStats={stats}
       />
     </ContentLayout>
   )
 }
+
+export default withOrganization(ClientPage);
