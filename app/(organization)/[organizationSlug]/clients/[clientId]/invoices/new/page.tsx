@@ -3,19 +3,20 @@ import { FileText } from "lucide-react";
 import { getClientById } from "@/app/actions/clients";
 import { notFound } from "next/navigation";
 import { CreateInvoiceForm } from "@/components/v2/invoices/create-invoice-form";
-import { withOrganization } from '@/utils/withOrganization';
+import { auth } from '@clerk/nextjs/server';
 
-type PageProps = {
-  params: { 
-    organizationSlug: string; 
-    clientId: string;
-  };
-  organization: any;
-};
-
-async function CreateInvoicePage({ params, organization }: PageProps) {
+export default async function CreateClientPage({
+  params,
+}: {
+  params: Promise<{ organizationSlug: string; clientId: string }>;
+}) {
   const { organizationSlug, clientId } = await params;
-
+  const { orgId } = await auth();
+  
+  if (!orgId) {
+    throw new Error("Organization not found - this should be handled by layout");
+  }
+  
   const clientData = await getClientById(clientId);
   if (!clientData) {
     notFound();
@@ -35,12 +36,10 @@ async function CreateInvoicePage({ params, organization }: PageProps) {
       breadcrumbs={breadcrumbs}
     > 
       <CreateInvoiceForm 
-        client={clientData}
-        organizationId={organization.id}
-        organizationSlug={organizationSlug}
+        client={clientData} 
+        organizationId={orgId} 
+        organizationSlug={organizationSlug} 
       />
     </ContentLayout>
   );
 }
-
-export default withOrganization(CreateInvoicePage);
