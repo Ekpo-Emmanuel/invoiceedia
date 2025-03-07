@@ -13,9 +13,9 @@ interface ClientDetailsProps {
 }
 
 export function ClientDetails({ client, organizationSlug }: ClientDetailsProps) {
-  const totalInvoiceValue = client.invoices?.reduce((sum, invoice) => sum + invoice.value, 0) || 0;
+  const totalInvoiceValue = client.invoices?.reduce((sum, invoice) => sum + invoice.total, 0) || 0;
   const paidInvoices = client.invoices?.filter(invoice => invoice.status === 'paid') || [];
-  const totalPaidValue = paidInvoices.reduce((sum, invoice) => sum + invoice.value, 0);
+  const totalPaidValue = paidInvoices.reduce((sum, invoice) => sum + invoice.total, 0);
 
   return (
     <div className="space-y-6">
