@@ -15,14 +15,17 @@ export function withOrganization<T extends { params: PageParams | Promise<PagePa
     const { organizationSlug } = params;
     const client = await clerkClient();
 
-    const organizationExists = await checkOrganizationExists(organizationSlug);
+    try {
+      const organization = await client.organizations.getOrganization({ slug: organizationSlug });
+      
+      if (!organization) {
+        return <OrganizationNotFound />;
+      }
 
-    if (!organizationExists) {
+      return <WrappedComponent {...props} organization={organization} />;
+    } catch (error) {
+      console.error("Error fetching organization:", error);
       return <OrganizationNotFound />;
     }
-
-    const organization = await client.organizations.getOrganization({ slug: organizationSlug });
-
-    return <WrappedComponent {...props} organization={organization} />;
   };
 }

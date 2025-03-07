@@ -3,7 +3,7 @@ import DashboardHomePage from '@/components/v2/home/home-content-page';
 import { withOrganization } from '@/utils/withOrganization';
 
 interface PageProps {
-  params: Promise<{ organizationSlug: string }>;
+  params: { organizationSlug: string };
   organization: any;
 }
 

@@ -13,7 +13,7 @@ export function ViewToggle({ view, onViewChange }: ViewToggleProps) {
     <ToggleGroup 
         type="single" 
         value={view} onValueChange={(value) => value && onViewChange(value as "table" | "list")}
-        className="bg-white dark:bg-muted/20 border p-1 rounded"
+        // className="bg-white dark:bg-muted/20 border p-1 rounded"
     >
       <ToggleGroupItem value="table" aria-label="Toggle table view" className="p-0">
         <List className="h-3 w-3" />
