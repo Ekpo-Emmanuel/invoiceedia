@@ -219,7 +219,7 @@ export default function PaymentDisplay({
                     </div>
                     <CardDescription>{invoice.description}</CardDescription>
                   </div>
-                  <div className="text-3xl font-bold">${(invoice.value / 100).toFixed(2)}</div>
+                  <div className="text-3xl font-bold">${(invoice.total / 100).toFixed(2)}</div>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="rounded-lg bg-gray-50 p-6">
@@ -251,7 +251,7 @@ export default function PaymentDisplay({
                         {token && <input type="hidden" value={token} name="token"/>}
                         <Button className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold" size="lg">
                           <CreditCard className="mr-2 h-4 w-4" />
-                          Pay ${(invoice.value / 100).toFixed(2)}
+                          Pay ${(invoice.total / 100).toFixed(2)}
                         </Button>
                         <p className="text-center text-sm text-muted-foreground">
                           Secure payment powered by Stripe

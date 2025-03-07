@@ -1,52 +1,45 @@
 import { ContentLayout } from '@/components/admin-panel/content-layout';
 import { Settings } from 'lucide-react';
-import { withOrganization } from '@/utils/withOrganization';
 import SettingsContent from '@/components/v2/settings/settings-content';
+import { checkOrganizationExists } from '@/utils/serverUtils';
+import { clerkClient } from '@clerk/nextjs/server';
 
-type PageProps = {
-  params: { organizationSlug: string; [key: string]: any };
-  organization: any;
-};
-
-async function SettingsPage({ params, organization }: PageProps) {
-  const { organizationSlug } = params;
+export default async function SettingsPage({
+  params,
+}: {
+  params: Promise<{ organizationSlug: string }>;
+}) {
+  const { organizationSlug } = await params;
+  const organizationId = await checkOrganizationExists(organizationSlug);
+  
+  if (!organizationId) {
+    throw new Error("Organization not found - this should be handled by layout");
+  }
+  
+  const client = await clerkClient();
+  const organization = await client.organizations.getOrganization({ organizationId });
   
   const serializedOrg = {
     id: organization.id,
     name: organization.name,
-    email: organization.email,
-    phone: organization.phone,
-    logoUrl: organization.imageUrl,
-    invoicePrefix: organization.publicMetadata?.invoicePrefix || "INV-",
-    paymentTerms: organization.publicMetadata?.paymentTerms || "net_30",
-    currency: organization.publicMetadata?.currency || "USD",
-    enableTax: organization.publicMetadata?.enableTax || false,
-    enableDiscount: organization.publicMetadata?.enableDiscount || false,
-    defaultTaxRate: organization.publicMetadata?.defaultTaxRate || "",
-    invoiceTemplates: organization.publicMetadata?.invoiceTemplates || [],
+    email: '',
+    phone: '',
+    logoUrl: organization.imageUrl || '',
+    invoicePrefix: (organization.publicMetadata as Record<string, any>)?.invoicePrefix || "INV-",
+    paymentTerms: (organization.publicMetadata as Record<string, any>)?.paymentTerms || "net_30",
+    currency: (organization.publicMetadata as Record<string, any>)?.currency || "USD",
+    enableTax: (organization.publicMetadata as Record<string, any>)?.enableTax || false,
+    enableDiscount: (organization.publicMetadata as Record<string, any>)?.enableDiscount || false,
+    defaultTaxRate: (organization.publicMetadata as Record<string, any>)?.defaultTaxRate || "",
+    invoiceTemplates: (organization.publicMetadata as Record<string, any>)?.invoiceTemplates || [],
   };
   
   return (
-    <ContentLayout 
-      title="Settings" 
-      icon={Settings} 
-      breadcrumbs={[
-        {
-          label: 'Home',
-          href: `/${organizationSlug}`
-        },
-        {
-          label: 'Settings',
-          href: `/${organizationSlug}/settings`
-        }
-      ]}
-    >
+    <ContentLayout title="Settings" icon={Settings}>
       <SettingsContent 
-        organization={serializedOrg}
-        organizationSlug={organizationSlug}
+        organization={serializedOrg} 
+        organizationSlug={organizationSlug} 
       />
     </ContentLayout>
   );
 }
-
-export default withOrganization(SettingsPage);
