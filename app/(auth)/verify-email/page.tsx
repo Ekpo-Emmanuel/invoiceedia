@@ -4,14 +4,14 @@ import { useSignUp } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { ChevronLeft } from 'lucide-react';
 import LogoSvg from "@/components/logo-svg";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function VerifyEmailPage() {
+function VerifyEmailContent() {
   const { isLoaded, signUp, setActive } = useSignUp();
   const [code, setCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -81,7 +81,6 @@ export default function VerifyEmailPage() {
           <div>
             <LogoSvg fill="currentColor" className="h-8 w-8" />
             <div className="mt-6 flex items-center gap-2">
-              {/* <MailCheck className="h-5 w-5 text-primary" /> */}
               <h2 className="text-xl tracking-[-0.16px] text-slate-12 font-bold">
                 Check your email
               </h2>
@@ -122,5 +121,13 @@ export default function VerifyEmailPage() {
         </div>
       </div>
     </section>
+  );
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={<p>Loading...</p>}>
+      <VerifyEmailContent />
+    </Suspense>
   );
 }
