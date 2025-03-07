@@ -72,7 +72,7 @@ export function ClientList({ clients, organizationSlug, onClientsDeleted }: Clie
                     <span>{client.invoices?.length || 0} Invoices</span>
                   </Link>
                   <span className="text-sm font-medium text-right">
-                    {formatCurrency(client.invoices?.reduce((sum, invoice) => sum + invoice.value, 0) || 0)}
+                    {formatCurrency(client.invoices?.reduce((sum, invoice) => sum + invoice.total, 0) || 0)}
                   </span>
                 </div>
               </div>
