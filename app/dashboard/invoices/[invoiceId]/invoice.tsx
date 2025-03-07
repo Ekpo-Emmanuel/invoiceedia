@@ -374,7 +374,7 @@ export default function Invoice({ invoice }: InvooiceProps) {
               Amount Due
             </div>
             <div className="text-4xl font-bold">
-              ${(invoice.value / 100).toFixed(2)}
+              ${(invoice.total / 100).toFixed(2)}
             </div>
           </div>
           <Separator className="my-4" />
