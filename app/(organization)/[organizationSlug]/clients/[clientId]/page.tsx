@@ -3,45 +3,43 @@ import { Users } from "lucide-react";
 import { getClientById } from "@/app/actions/clients";
 import { ClientProfile } from "@/components/v2/clients/client-profile";
 import ClientUserNotFound from "@/components/v2/clients/client-user-not-found";
-import { withOrganization } from '@/utils/withOrganization';
-// import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { checkOrganizationExists } from '@/utils/serverUtils';
+import { auth } from '@clerk/nextjs/server';
 
-interface PageProps {
-  params: {
-    organizationSlug: string;
-    clientId: string;
-  };
-  organization: any;
-}
-
-async function ClientPage({ params, organization }: PageProps) {
+export default async function ClientPage({
+  params,
+}: {
+  params: Promise<{ organizationSlug: string; clientId: string }>;
+}) {
   const { organizationSlug, clientId } = await params;
+  const { orgId } = await auth();
+  const organizationId = await checkOrganizationExists(organizationSlug);
 
-  const clientData = await getClientById(clientId);
-  if (!clientData) {
+  if (!organizationId) {
+    throw new Error("Organization not found - this should be handled by layout");
+  }
+  
+  const client = await getClientById(clientId);
+  
+  if (!client) {
     return <ClientUserNotFound />;
   }
 
   const breadcrumbs = [
     { label: "Home", href: `/${organizationSlug}` },
     { label: "Clients", href: `/${organizationSlug}/clients` },
-    { label: `${clientData?.firstName} ${clientData?.lastName}`, href: "#" },
+    { label: `${client.firstName} ${client.lastName}`, href: "#" },
   ];
 
   return (
-    <>
-      <ContentLayout 
-        title={`${clientData?.firstName} ${clientData?.lastName}`} 
-        icon={Users}
-      //   breadcrumbs={breadcrumbs}
-      > 
-        <ClientProfile 
-          client={clientData}
-          organizationSlug={organizationSlug}
-        />
-      </ContentLayout>
-    </>
+    <ContentLayout 
+      title={`${client.firstName} ${client.lastName}`} 
+      breadcrumbs={breadcrumbs}
+    >
+      <ClientProfile 
+        client={client} 
+        organizationSlug={organizationSlug} 
+      />
+    </ContentLayout>
   );
-}
-
-export default withOrganization(ClientPage); 
+} 
